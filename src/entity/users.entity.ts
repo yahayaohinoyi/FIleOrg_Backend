@@ -14,6 +14,14 @@ export class UserEntity implements User {
 
   @Column()
   @IsNotEmpty()
+  firstName: string;
+
+  @Column()
+  @IsNotEmpty()
+  lastName: string;
+
+  @Column()
+  @IsNotEmpty()
   password: string;
 
   @Column()

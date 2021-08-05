@@ -16,6 +16,9 @@ import { dbConnection } from '@databases';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
+import passport from 'passport';
+import session from 'express-session';
+// import { Strategy } from 'passport-google-oauth2';
 
 class App {
   public app: express.Application;
@@ -32,6 +35,8 @@ class App {
     this.initializeRoutes(routes);
     this.initializeSwagger();
     this.initializeErrorHandling();
+    this.connectPassport();
+    this.makeOAuthRequests();
   }
 
   public listen() {
@@ -60,6 +65,23 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
+    this.app.use(
+      session({
+        secret: 'keyboard cat',
+        resave: false,
+        saveUninitialized: true,
+      }),
+    );
+    this.app.use(passport.initialize());
+    this.app.use(passport.session());
+
+    passport.serializeUser((user, done) => {
+      return done(null, user);
+    });
+
+    passport.deserializeUser((user, done) => {
+      return done(null, user);
+    });
   }
 
   private initializeRoutes(routes: Routes[]) {
@@ -82,6 +104,37 @@ class App {
 
     const specs = swaggerJSDoc(options);
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+  }
+
+  private connectPassport() {
+    const GoogleStrategy = require('passport-google-oauth2').Strategy;
+
+    passport.use(
+      new GoogleStrategy(
+        {
+          clientID: '785688806738-4p0kv2uc77lb6vf5qg28p34mh390eb7r.apps.googleusercontent.com',
+          clientSecret: 'x_ipzW4TtGuY__HC99uKado5',
+          callbackURL: 'http://localhost:3000/auth/google/callback',
+          passReqToCallback: true,
+        },
+        function (request, accessToken, refreshToken, profile, cb) {
+          console.log(profile);
+          return cb(null, profile);
+        },
+      ),
+    );
+  }
+
+  private makeOAuthRequests() {
+    this.app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
+
+    this.app.get(
+      '/auth/google/callback',
+      passport.authenticate('google', {
+        successRedirect: '/users',
+        failureRedirect: '/notes',
+      }),
+    );
   }
 
   private initializeErrorHandling() {

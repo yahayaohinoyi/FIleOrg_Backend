@@ -3,8 +3,8 @@
     "dbConfig": {
         "host": "localhost",
         "user": "root",
-        "password": "password",
-        "database": "typeorm"
+        "password": "dangermouse",
+        "database": "file_org"
     },
     "secretKey": "secretKey",
     "log": {

@@ -1,3 +1,4 @@
+import { google } from 'googleapis';
 import bcrypt from 'bcrypt';
 import { getRepository } from 'typeorm';
 import { CreateUserDto } from '@dtos/users.dto';
@@ -37,6 +38,27 @@ class UserService {
 
     return createUserData;
   }
+
+  public createUserFromGoogle = async (googleUserData: any) => {
+    if (isEmpty(googleUserData)) throw new HttpException(400, 'Google OAUTH UNSUCCESSFUL');
+
+    const userData = new UserEntity();
+    userData.email = googleUserData.email;
+    userData.firstName = googleUserData.given_name;
+    userData.lastName = googleUserData.family_name;
+    userData.password = googleUserData.family_name;
+    userData.isConnected = true;
+
+    const userRepository = getRepository(this.users);
+
+    const findUser: User = await userRepository.findOne({ where: { email: userData.email } });
+    if (findUser) throw new HttpException(409, `You're email ${userData.email} already exists`);
+
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+    const createUserData = await userRepository.save({ ...userData, password: hashedPassword });
+    return createUserData;
+  };
 
   public async updateUser(userId: number, userData: CreateUserDto): Promise<User> {
     if (isEmpty(userData)) throw new HttpException(400, "You're not userData");

@@ -1,12 +1,16 @@
 import { IsNotEmpty } from 'class-validator';
-import { Entity, PrimaryGeneratedColumn, Column, Unique, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Unique, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { User } from '@interfaces/users.interface';
+import { FileEntity } from './files.entity';
 
 @Entity()
 @Unique(['email'])
 export class UserEntity implements User {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @OneToMany(() => FileEntity, files => files.createdBy)
+  files: FileEntity[];
 
   @Column()
   @IsNotEmpty()
@@ -21,8 +25,12 @@ export class UserEntity implements User {
   lastName: string;
 
   @Column()
-  @IsNotEmpty()
+  // @IsNotEmpty()
   password: string;
+
+  @Column({ default: false })
+  @IsNotEmpty()
+  isConnected: boolean;
 
   @Column()
   @CreateDateColumn()

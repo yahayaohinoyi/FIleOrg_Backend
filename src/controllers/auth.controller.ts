@@ -30,24 +30,21 @@ class AuthController {
     }
   };
 
-  public callback = async (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate('google', {
-      successRedirect: '/users',
-      failureRedirect: '/users',
-    });
-    // passport.authenticate('google', {
-    //   successMessage: 'Success',
-    // });
-    res.send('<h1>Welcome Back</h1>');
-  };
+  // public googleOAuthCallback = async (req: Request, res: Response, next: NextFunction) => {
+  //   try {
+  //     this.authService.googleOAuthCallback();
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // };
 
-  public loginWithGoogle = (req: Request, res: Response, next: NextFunction) => {
-    try {
-      this.authService.signInWithGoogle();
-    } catch (error) {
-      next(error);
-    }
-  };
+  // public loginWithGoogle = (req: Request, res: Response, next: NextFunction) => {
+  //   try {
+  //     this.authService.signInWithGoogle();
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // };
 
   public dummy = (req: RequestWithUser, res: Response, next: NextFunction) => {
     // res.send('hello');

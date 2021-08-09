@@ -18,12 +18,14 @@ import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
 import passport from 'passport';
 import session from 'express-session';
+import UserService from './services/users.service';
 // import { Strategy } from 'passport-google-oauth2';
 
 class App {
   public app: express.Application;
   public port: string | number;
   public env: string;
+  public userService = new UserService();
 
   constructor(routes: Routes[]) {
     this.app = express();
@@ -65,13 +67,13 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
-    this.app.use(
-      session({
-        secret: 'keyboard cat',
-        resave: false,
-        saveUninitialized: true,
-      }),
-    );
+    // this.app.use(
+    //   session({
+    //     secret: 'keyboard cat',
+    //     resave: true,
+    //     saveUninitialized: true,
+    //   }),
+    // );
     this.app.use(passport.initialize());
     this.app.use(passport.session());
 
@@ -106,8 +108,9 @@ class App {
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
   }
 
-  private connectPassport() {
+  public connectPassport() {
     const GoogleStrategy = require('passport-google-oauth2').Strategy;
+    const userService = this.userService;
 
     passport.use(
       new GoogleStrategy(
@@ -118,7 +121,7 @@ class App {
           passReqToCallback: true,
         },
         function (request, accessToken, refreshToken, profile, cb) {
-          console.log(profile);
+          userService.createUserFromGoogle(profile);
           return cb(null, profile);
         },
       ),
@@ -132,9 +135,17 @@ class App {
       '/auth/google/callback',
       passport.authenticate('google', {
         successRedirect: '/users',
-        failureRedirect: '/notes',
+        failureRedirect: '/users',
       }),
     );
+
+    // this.app.get(
+    //   'https://developers.google.com/oauthplayground/',
+    //   passport.authenticate('google', {
+    //     successRedirect: '/',
+    //     failureRedirect: '/',
+    //   }),
+    // );
   }
 
   private initializeErrorHandling() {

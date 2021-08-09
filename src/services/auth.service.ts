@@ -8,8 +8,6 @@ import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import { isEmpty } from '@utils/util';
-import { Strategy } from 'passport-google-oauth2';
-import passport from 'passport';
 
 class AuthService {
   public users = UserEntity;
@@ -40,11 +38,6 @@ class AuthService {
     const cookie = this.createCookie(tokenData);
 
     return { cookie, findUser };
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public async signInWithGoogle() {
-    passport.authenticate('google', { scope: ['email', 'profile'] });
   }
 
   public async logout(userData: User): Promise<User> {

@@ -1,6 +1,7 @@
 import { google } from 'googleapis';
 import path from 'path';
 import fs from 'fs';
+import mimeType from 'mime-types';
 
 class GoogleDriveApiUtil {
   public refreshToken: any;
@@ -33,13 +34,15 @@ class GoogleDriveApiUtil {
     this.drive = drive;
   }
 
-  public async uploadFile() {
+  public async uploadFile(filePath) {
     try {
       const filePath = path.join(__dirname + '../../..' + '/assets', 'yah.jpg');
+      const fileType = mimeType.lookup(String(filePath));
+      console.log(fileType);
       const res = await this.drive.files.create({
         requestBody: {
           name: 'yaheezy.jpg',
-          mimeType: 'image/jpg',
+          mimeType: fileType,
         },
         media: {
           mimeType: 'image/jpg',
@@ -48,6 +51,7 @@ class GoogleDriveApiUtil {
       });
 
       console.log(res.data);
+      return res.data;
     } catch (err) {
       console.log(err);
     }
@@ -138,4 +142,6 @@ class GoogleDriveApiUtil {
   }
 }
 
+const a = new GoogleDriveApiUtil();
+a.uploadFile('');
 export default GoogleDriveApiUtil;

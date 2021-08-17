@@ -1,9 +1,8 @@
-import { PriorityEntity } from './priorities.entity';
 import { IsNotEmpty } from 'class-validator';
-import { Entity, PrimaryGeneratedColumn, Column, Unique, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne, JoinColumn } from 'typeorm';
-import { User } from '@interfaces/users.interface';
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { FileEntity } from './files.entity';
-import { file } from 'googleapis/build/src/apis/file';
+import { FolderEntity } from './folders.entity';
+import { PriorityEntity } from './priorities.entity';
 
 @Entity()
 export class ReminderEntity {
@@ -19,6 +18,10 @@ export class ReminderEntity {
   @OneToOne(() => PriorityEntity, priority => priority.reminder)
   @JoinColumn()
   priority: PriorityEntity;
+
+  @OneToOne(() => FolderEntity, folder => folder.reminder)
+  @JoinColumn()
+  folder: FolderEntity;
 
   @Column()
   @IsNotEmpty()

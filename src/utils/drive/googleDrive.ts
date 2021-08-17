@@ -1,3 +1,4 @@
+import { HttpException } from '@exceptions/HttpException';
 import { google } from 'googleapis';
 import path from 'path';
 import fs from 'fs';
@@ -81,9 +82,9 @@ class GoogleDriveApiUtil {
         fileId: fileId,
         fields: 'webViewLink, webContentLink',
       });
-      console.log(res.data);
+      return res.data;
     } catch (err) {
-      console.log(err);
+      throw new HttpException(400, 'Failed to grant permission');
     }
   }
 
@@ -142,6 +143,4 @@ class GoogleDriveApiUtil {
   }
 }
 
-const a = new GoogleDriveApiUtil();
-a.uploadFile('');
 export default GoogleDriveApiUtil;

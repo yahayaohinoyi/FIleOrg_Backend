@@ -6,17 +6,17 @@ import { ReminderEntity } from './reminders.entity';
 // import { User } from '@interfaces/users.interface';
 
 @Entity()
-export class FileEntity {
+export class FolderEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => UserEntity, user => user.files)
+  @ManyToOne(() => UserEntity, user => user.folders)
   @JoinColumn()
   createdBy: UserEntity;
 
   @Column()
   @IsNotEmpty()
-  downloadCount: number;
+  folderScore: Number;
 
   @Column()
   @IsNotEmpty()
@@ -28,13 +28,13 @@ export class FileEntity {
 
   @Column()
   @IsNotEmpty()
-  document_id: String;
+  folderId: String;
 
-  @OneToOne(() => ReminderEntity, reminder => reminder.file)
+  @OneToOne(() => ReminderEntity, reminder => reminder.folder)
   @JoinColumn()
   reminder: ReminderEntity;
 
-  @OneToOne(() => PriorityEntity, priority => priority.file)
+  @OneToOne(() => PriorityEntity, priority => priority.folder)
   @JoinColumn()
   priority: PriorityEntity;
 

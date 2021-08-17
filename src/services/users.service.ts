@@ -1,4 +1,3 @@
-import { google } from 'googleapis';
 import bcrypt from 'bcrypt';
 import { getRepository } from 'typeorm';
 import { CreateUserDto } from '@dtos/users.dto';
@@ -31,7 +30,7 @@ class UserService {
 
     const userRepository = getRepository(this.users);
     const findUser: User = await userRepository.findOne({ where: { email: userData.email } });
-    if (findUser) throw new HttpException(409, `You're email ${userData.email} already exists`);
+    if (findUser) throw new HttpException(409, `Your email ${userData.email} already exists`);
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const createUserData: User = await userRepository.save({ ...userData, password: hashedPassword });

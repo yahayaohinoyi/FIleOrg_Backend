@@ -1,3 +1,4 @@
+import { FolderEntity } from './folders.entity';
 import { ReminderEntity } from './reminders.entity';
 import { IsNotEmpty } from 'class-validator';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
@@ -17,6 +18,9 @@ export class PriorityEntity {
 
   @OneToOne(() => ReminderEntity, reminder => reminder.priority)
   reminder: ReminderEntity;
+
+  @OneToOne(() => FolderEntity, folder => folder.priority)
+  folder: FolderEntity;
 
   @Column()
   @CreateDateColumn()

@@ -1,3 +1,4 @@
+import { FolderEntity } from './folders.entity';
 import { IsNotEmpty } from 'class-validator';
 import { Entity, PrimaryGeneratedColumn, Column, Unique, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { User } from '@interfaces/users.interface';
@@ -11,6 +12,9 @@ export class UserEntity implements User {
 
   @OneToMany(() => FileEntity, files => files.createdBy)
   files: FileEntity[];
+
+  @OneToMany(() => FolderEntity, folders => folders.createdBy)
+  folders: FolderEntity[];
 
   @Column()
   @IsNotEmpty()

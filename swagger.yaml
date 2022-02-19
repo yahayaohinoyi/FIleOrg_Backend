@@ -1,6 +1,6 @@
 tags:
-- name: users
-  description: users API
+- name: fileOrg
+  description: fileOrg API
 
 paths:
 # [GET] users
@@ -103,6 +103,40 @@ paths:
         500:
           description: 'Server Error'
 
+# [GET] files
+  /files:
+    get:
+      tags:
+      - files
+      summary: Find All Files
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+
+# [POST] files
+    post:
+      tags:
+      - files
+      summary: Add File
+      parameters:
+      - name: body
+        in: body
+        description: file Data
+        required: true
+        schema:
+          $ref: '#/definitions/files'
+      responses:
+        201:
+          description: 'Created'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
 # definitions
 definitions:
   users:
@@ -120,6 +154,23 @@ definitions:
       password:
         type: string
         description: user Password
+
+  files:
+    type: object
+    required:
+        - title
+        - description
+    properties:
+      id:
+        type: integer
+        description: user Id
+      title:
+        type: string
+        description: file title
+      description:
+        type: string
+        description: file description
+
 
 schemes:
  - https

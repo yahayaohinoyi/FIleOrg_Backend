@@ -1,4 +1,3 @@
-import { logger } from '@utils/logger';
 import FileService from '@/services/files.service';
 import { NextFunction, Request, Response } from 'express';
 import { FileEntity } from './../entity/files.entity';
@@ -16,8 +15,17 @@ class FilesController {
       };
 
       const findAllFileData: FileEntity[] = await this.fileService.findAllFiles(skip, take, filterOptions);
-
       res.status(200).json({ data: findAllFileData, message: 'all files' });
+    } catch (error) {
+      next(error);
+    }
+  };
+  public getAllFileFolders = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const fileId = Number(req.params.id);
+      const findAllFileData: FileEntity[] = await this.fileService.findAllFileFolders(fileId);
+
+      res.status(200).json({ data: findAllFileData, message: 'all file folders' });
     } catch (error) {
       next(error);
     }

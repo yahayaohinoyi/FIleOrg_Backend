@@ -10,10 +10,10 @@ export class UserEntity implements User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => FileEntity, files => files.createdBy)
+  @OneToMany(() => FileEntity, files => files.createdBy, { cascade: true })
   files: FileEntity[];
 
-  @OneToMany(() => FolderEntity, folders => folders.createdBy)
+  @OneToMany(() => FolderEntity, folders => folders.createdBy, { cascade: true })
   folders: FolderEntity[];
 
   @Column()

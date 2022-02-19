@@ -9,9 +9,18 @@ import FilesRoute from '@routes/files.route';
 import validateEnv from '@utils/validateEnv';
 import RemindersRoute from './routes/reminders.route';
 import PrioritiesRoute from './routes/priorities.route';
+import FolderRoute from './routes/folders.route';
 
 validateEnv();
 
-const app = new App([new IndexRoute(), new UsersRoute(), new AuthRoute(), new FilesRoute(), new RemindersRoute(), new PrioritiesRoute()]);
+const app = new App([
+  new IndexRoute(),
+  new UsersRoute(),
+  new AuthRoute(),
+  new FilesRoute(),
+  new RemindersRoute(),
+  new PrioritiesRoute(),
+  new FolderRoute(),
+]);
 
 app.listen();

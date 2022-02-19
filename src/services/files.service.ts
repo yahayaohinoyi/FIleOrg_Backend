@@ -1,7 +1,9 @@
+import { PriorityEntity } from './../entity/priorities.entity';
 import { HttpException } from '@exceptions/HttpException';
 import { getRepository } from 'typeorm';
 import GoogleDriveApiUtil from '../utils/drive/googleDrive';
 import { FileEntity } from './../entity/files.entity';
+import PriorityService from './priorities.service';
 
 class FileService {
   public files = FileEntity;
@@ -28,12 +30,27 @@ class FileService {
   }
 
   public async findFile(fileId: number): Promise<FileEntity> {
+    const file: FileEntity = await getRepository(this.files).findOne({ where: { id: fileId } });
+    if (!file) throw new HttpException(400, 'Bad Request');
     const fileRepository = getRepository(this.files)
       .createQueryBuilder('file')
       .leftJoinAndSelect('file.createdBy', 'user')
       .leftJoinAndSelect('file.priority', 'priority')
       .where('file.id = :id', { id: fileId })
       .getOne();
+    return fileRepository;
+  }
+
+  public async findAllFileFolders(fileId: number): Promise<FileEntity[]> {
+    const file: FileEntity = await getRepository(this.files).findOne({ where: { id: fileId } });
+    if (!file) throw new HttpException(400, 'Bad Request');
+    const fileRepository = getRepository(this.files)
+      .createQueryBuilder('file')
+      .leftJoinAndSelect('file.createdBy', 'user')
+      .leftJoinAndSelect('file.priority', 'priority')
+      .leftJoinAndSelect('file.folders', 'folders')
+      .where('file.id = :id', { id: fileId })
+      .getMany();
     return fileRepository;
   }
 
@@ -61,10 +78,17 @@ class FileService {
 
     const newFile = new FileEntity();
 
+    let priority: PriorityEntity = await getRepository(PriorityEntity).findOne({ where: { name: fileData.priority } });
+
+    if (!priority) {
+      priority = await getRepository(PriorityEntity).findOne({ where: { name: 'Low' } });
+    }
+
     newFile.title = fileData.title;
     newFile.description = fileData.description;
     newFile.document_id = driveFile.id;
     newFile.downloadCount = 0;
+    newFile.priority = priority;
 
     const file = await fileRepository.save(newFile);
     return file;

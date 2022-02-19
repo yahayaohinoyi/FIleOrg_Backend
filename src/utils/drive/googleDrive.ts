@@ -98,47 +98,54 @@ class GoogleDriveApiUtil {
       const folderResponse = await this.drive.files.create({
         resource: fileMetaData,
       });
-      return folderResponse;
+      return folderResponse.data;
     } catch (err) {
       console.log(err);
     }
   }
 
-  public async addFileToFolder(fileId: string, folderId: string) {
+  public async addFileToFolder(fileId: any, folderId: any) {
     try {
       const file = await this.drive.files.get({
         fileId: fileId,
         fields: 'parents',
       });
 
-      const previousParents = file.parent.join(',');
+      // const previousParents = file.parent.join(',');
       const newFileLocation = await this.drive.files.update({
         fileId: fileId,
         addParents: folderId,
         // removeParents: previousParents,
         fields: 'id, parents',
       });
-      return newFileLocation;
+      console.log(newFileLocation.data);
+      return newFileLocation.data;
     } catch (err) {
-      console.log(err);
+      throw new HttpException(400, err.message);
     }
   }
 
-  public async removeFileFromFolders(fileId: string) {
+  public async removeFileFromFolders(fileId: String, folderId: String) {
     try {
       const file = await this.drive.files.get({
         fileId: fileId,
         fields: 'parents',
       });
-      const previousParents = file.parent.join(',');
+
+      const fileSet = new Set(file.data.parents);
+      console.log(fileSet, folderId);
+      if (!fileSet.has(folderId)) throw new HttpException(400, 'cannot find file in folder from drive');
+
+      const par = [folderId];
+      // const previousParents = file.parent.join(',');
       const response = await this.drive.files.update({
         fileId: fileId,
-        removeParents: previousParents,
+        removeParents: par,
         fields: 'id, parents',
       });
-      return response;
+      return response.data;
     } catch (err) {
-      console.log(err);
+      throw new HttpException(400, err.message);
     }
   }
 }

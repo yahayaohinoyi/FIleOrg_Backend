@@ -29,7 +29,7 @@ class App {
 
   constructor(routes: Routes[]) {
     this.app = express();
-    this.port = process.env.PORT || 3000;
+    this.port = process.env.PORT || 5000;
     this.env = process.env.NODE_ENV || 'development';
 
     this.env !== 'test' && this.connectToDatabase();
@@ -37,8 +37,8 @@ class App {
     this.initializeRoutes(routes);
     this.initializeSwagger();
     this.initializeErrorHandling();
-    this.connectPassport();
-    this.makeOAuthRequests();
+    // this.connectPassport();
+    // this.makeOAuthRequests();
   }
 
   public listen() {
@@ -96,7 +96,7 @@ class App {
     const options = {
       swaggerDefinition: {
         info: {
-          title: 'REST API',
+          title: 'FILE ORG API',
           version: '1.0.0',
           description: 'Example docs',
         },
@@ -108,45 +108,37 @@ class App {
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
   }
 
-  public connectPassport() {
-    const GoogleStrategy = require('passport-google-oauth2').Strategy;
-    const userService = this.userService;
+  // public connectPassport() {
+  //   const GoogleStrategy = require('passport-google-oauth2').Strategy;
+  //   const userService = this.userService;
 
-    passport.use(
-      new GoogleStrategy(
-        {
-          clientID: '785688806738-4p0kv2uc77lb6vf5qg28p34mh390eb7r.apps.googleusercontent.com',
-          clientSecret: 'x_ipzW4TtGuY__HC99uKado5',
-          callbackURL: 'http://localhost:3000/auth/google/callback',
-          passReqToCallback: true,
-        },
-        function (request, accessToken, refreshToken, profile, cb) {
-          userService.createUserFromGoogle(profile);
-          return cb(null, profile);
-        },
-      ),
-    );
-  }
+  //   passport.use(
+  //     new GoogleStrategy(
+  //       {
+  //         clientID: '785688806738-4p0kv2uc77lb6vf5qg28p34mh390eb7r.apps.googleusercontent.com',
+  //         clientSecret: 'x_ipzW4TtGuY__HC99uKado5',
+  //         callbackURL: 'http://localhost:3000/auth/google/callback',
+  //         passReqToCallback: true,
+  //       },
+  //       function (request, accessToken, refreshToken, profile, cb) {
+  //         userService.createUserFromGoogle(profile);
+  //         return cb(null, profile);
+  //       },
+  //     ),
+  //   );
+  // }
 
-  private makeOAuthRequests() {
-    this.app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
+  // private makeOAuthRequests() {
+  //   this.app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
-    this.app.get(
-      '/auth/google/callback',
-      passport.authenticate('google', {
-        successRedirect: '/users',
-        failureRedirect: '/users',
-      }),
-    );
-
-    // this.app.get(
-    //   'https://developers.google.com/oauthplayground/',
-    //   passport.authenticate('google', {
-    //     successRedirect: '/',
-    //     failureRedirect: '/',
-    //   }),
-    // );
-  }
+  //   this.app.get(
+  //     '/auth/google/callback',
+  //     passport.authenticate('google', {
+  //       successRedirect: '/users',
+  //       failureRedirect: '/users',
+  //     }),
+  //   );
+  // }
 
   private initializeErrorHandling() {
     this.app.use(errorMiddleware);

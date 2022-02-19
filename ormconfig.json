@@ -2,7 +2,7 @@
     "type": "postgres",
     "host": "localhost",
     "port": 5432,
-    "username": "root",
+    "username": "mac",
     "password": "dangermouse",
     "database": "file_org",
     "synchronize": false,

@@ -1,7 +1,7 @@
 import { FolderEntity } from './folders.entity';
 import { ReminderEntity } from './reminders.entity';
 import { IsNotEmpty } from 'class-validator';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany } from 'typeorm';
 import { FileEntity } from './files.entity';
 
 @Entity()
@@ -19,8 +19,8 @@ export class PriorityEntity {
   @OneToOne(() => ReminderEntity, reminder => reminder.priority)
   reminder: ReminderEntity;
 
-  @OneToOne(() => FolderEntity, folder => folder.priority)
-  folder: FolderEntity;
+  @OneToMany(() => FolderEntity, folders => folders.priority)
+  folders: FolderEntity[];
 
   @Column()
   @CreateDateColumn()
